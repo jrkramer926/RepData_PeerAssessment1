@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+<meta name="author" content="Jack Kramer" />
+
+<meta name="date" content="2016-05-27" />
+
+<title>Reproducible Research Assignment 1</title>
+
+<script src="Reproducible_Research_Assignment_1_files/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="Reproducible_Research_Assignment_1_files/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="Reproducible_Research_Assignment_1_files/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="Reproducible_Research_Assignment_1_files/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="Reproducible_Research_Assignment_1_files/bootstrap-3.3.5/shim/respond.min.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<link rel="stylesheet"
+      href="Reproducible_Research_Assignment_1_files/highlight/default.css"
+      type="text/css" />
+<script src="Reproducible_Research_Assignment_1_files/highlight/highlight.js"></script>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs && document.readyState && document.readyState === "complete") {
+   window.setTimeout(function() {
+      hljs.initHighlighting();
+   }, 0);
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script src="Reproducible_Research_Assignment_1_files/navigation-1.0/tabsets.js"></script>
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
+
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Reproducible Research Assignment 1</h1>
+<h4 class="author"><em>Jack Kramer</em></h4>
+<h4 class="date"><em>May 27, 2016</em></h4>
+
+</div>
+
+
+<div id="loading-and-preprocessing-the-data" class="section level2">
+<h2>Loading and preprocessing the data</h2>
+<ol style="list-style-type: decimal">
+<li><p>Load the data</p>
+<pre class="{r}"><code>setwd(&quot;\\Users\\kcaj2\\Desktop\\Coursera\\Reproducable Research\\RepData_PeerAssessment1-master&quot;)
+data &lt;- read.csv(&quot;activity.csv&quot;, na.strings = &quot;NA&quot;)</code></pre></li>
+<li><p>Process/transform the data into a format suitable for your analysis ```{r} data<span class="math">\(date &lt;- as.Date(data\)</span>date, format = “%Y-%m-%d”) NAdata &lt;- data[complete.cases(data),]</p></li>
+</ol>
+<p>```</p>
+</div>
+<div id="what-is-mean-total-number-of-steps-taken-per-day" class="section level2">
+<h2>What is mean total number of steps taken per day?</h2>
+<ol style="list-style-type: decimal">
+<li>Calculate the total number of steps taken per day</li>
+</ol>
+<pre class="{r}"><code>stepdata &lt;- aggregate(steps~date, data = NAdata, FUN = sum)
+head(stepdata)</code></pre>
+<ol start="2" style="list-style-type: decimal">
+<li>Make a histogram of the total number of steps taken each day ```{r, fig.keep=‘high’, warning=FALSE}</li>
+</ol>
+<p>library(“ggplot2”) ggplot(data = stepdata, aes(x = steps)) + ggtitle(“Frequency of Steps”) + geom_histogram(binwidth = 705.1)</p>
+<p>```</p>
+<ol start="3" style="list-style-type: decimal">
+<li><p>Calculate and report the mean and median of the total number of steps taken per day</p>
+<pre class="{r}"><code>mean(stepdata$steps)
+median(stepdata$steps)</code></pre></li>
+</ol>
+</div>
+<div id="what-is-the-average-daily-activity-pattern" class="section level2">
+<h2>What is the average daily activity pattern?</h2>
+<ol style="list-style-type: decimal">
+<li>Make a time series plot (i.e. type = “l”) of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)</li>
+</ol>
+<p>```{r, fig.keep=‘high’} avgdata &lt;- aggregate(steps~interval, data = NAdata, FUN = mean) head(avgdata)</p>
+<p>ggplot(avgdata, aes(x=interval, y = steps)) + geom_line() + ggtitle(“Average Steps at each Interval”)</p>
+<p>```</p>
+<ol start="2" style="list-style-type: decimal">
+<li>Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps? ```{r} avgdata[which.max(avgdata$steps),]</li>
+</ol>
+<p>```</p>
+</div>
+<div id="imputing-missing-values" class="section level2">
+<h2>Imputing missing values</h2>
+<ol style="list-style-type: decimal">
+<li>Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with NAs) ```{r} sum(is.na(data$steps))</li>
+</ol>
+<p>```</p>
+<ol start="2" style="list-style-type: decimal">
+<li>Devise a strategy for filling in all of the missing values in the dataset.</li>
+</ol>
+<pre class="{r}"><code>##we will use average steps for each 5-minute interval since it is already generated.
+
+head(avgdata)
+</code></pre>
+<ol start="3" style="list-style-type: decimal">
+<li>Create a new dataset that is equal to the original dataset but with the missing data filled in.</li>
+</ol>
+<pre class="{r}"><code>
+filldata &lt;- data
+for(i in 1:nrow(filldata)) {
+    if(is.na(filldata[i,1])){
+        filldata[i,1] &lt;- avgdata[match(filldata[i,3], avgdata[,1]),2]
+    }
+}
+head(data)
+head(avgdata)
+head(filldata)
+</code></pre>
+<ol start="4" style="list-style-type: decimal">
+<li>Make a histogram of the total number of steps taken each day and Calculate and report the mean and median total number of steps taken per day. Do these values differ from the estimates from the first part of the assignment? What is the impact of imputing missing data on the estimates of the total daily number of steps?</li>
+</ol>
+<p>```{r, fig.keep=‘high’} aggfilldata &lt;- aggregate(steps~date, data = filldata, FUN = sum)</p>
+<p>ggplot(data = aggfilldata, aes(x = steps)) + ggtitle(“Frequency of Steps with NAs Replaced”) + geom_histogram(binwidth = 705.1)</p>
+<p>mean(aggfilldata<span class="math">\(steps) median(aggfilldata\)</span>steps) ```</p>
+</div>
+<div id="are-there-differences-in-activity-patterns-between-weekdays-and-weekends" class="section level2">
+<h2>Are there differences in activity patterns between weekdays and weekends?</h2>
+<p>For this part the weekdays() function may be of some help here. Use the dataset with the filled-in missing values for this part.</p>
+<ol style="list-style-type: decimal">
+<li>Create a new factor variable in the dataset with two levels - “weekday” and “weekend” indicating whether a given date is a weekday or weekend day.</li>
+</ol>
+<pre class="{r}"><code>weekdaydata &lt;- filldata
+weekendvect &lt;- c(&quot;Saturday&quot;, &quot;Sunday&quot;)
+weekdaydata$daytype &lt;- factor((weekdays(weekdaydata$date) %in% weekendvect), levels = c(FALSE, TRUE), labels = c(&quot;Weekday&quot;, &quot;Weekend&quot;))
+
+head(weekdaydata)
+</code></pre>
+<ol start="2" style="list-style-type: decimal">
+<li>Make a panel plot containing a time series plot (i.e. type = “l”) of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis).</li>
+</ol>
+<p>```{r, fig.keep=‘high’} aggweekdaydata &lt;- aggregate(steps~daytype+interval, data = weekdaydata, FUN = mean)</p>
+<p>ggplot(aggweekdaydata, aes(x=interval, y = steps, color = daytype)) + geom_line() + facet_wrap(~daytype, ncol = 1, nrow = 2)+ ggtitle(“Average Steps at each Interval”)</p>
+<p>```</p>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+$(document).ready(function () {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+});
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
